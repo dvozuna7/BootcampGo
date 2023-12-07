@@ -34,7 +34,12 @@ func populateProducts() error {
 		fmt.Println(err)
 		return err
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			fmt.Println(err)
+		}
+	}(file)
 	productsBytes, err := io.ReadAll(file)
 	if err != nil {
 		fmt.Println(err)
