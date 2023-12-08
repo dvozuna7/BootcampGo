@@ -23,10 +23,13 @@ var products []Product
 
 func openFile(fileName string) (file *os.File, err error) {
 	file, err = os.Open(fileName)
+	return file, err
+}
+func closeFile(file *os.File) {
+	err := file.Close()
 	if err != nil {
-		return nil, err
+		fmt.Println(err)
 	}
-	return file, nil
 }
 func populateProducts() error {
 	file, err := openFile("products.json")
@@ -34,12 +37,7 @@ func populateProducts() error {
 		fmt.Println(err)
 		return err
 	}
-	defer func(file *os.File) {
-		err := file.Close()
-		if err != nil {
-			fmt.Println(err)
-		}
-	}(file)
+	defer closeFile(file)
 	productsBytes, err := io.ReadAll(file)
 	if err != nil {
 		fmt.Println(err)
@@ -103,20 +101,15 @@ func GetAllWithPriceGreaterThan(c *gin.Context) {
 }
 
 func main() {
-	// gin default
 	engine := gin.Default()
-
-	// gin router
 	err := populateProducts()
 	if err != nil {
-		fmt.Println(err)
-		return
+		panic(err)
 	}
 	engine.GET("/ping", Ping)
 	engine.GET("/products", GetProducts)
 	engine.GET("/products/:id", GetProductById)
 	engine.GET("/products/search", GetAllWithPriceGreaterThan)
-
 	err = engine.Run()
 	if err != nil {
 		fmt.Println(err)
