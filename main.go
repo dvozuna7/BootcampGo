@@ -144,7 +144,7 @@ func SaveProduct(ctx *gin.Context) {
 		})
 		return
 	}
-	if product.Expiration == "" || isValidDate(product.Expiration) {
+	if product.Expiration == "" || !isValidDate(product.Expiration) {
 		ctx.JSON(400, gin.H{
 			"message": "invalid expiration",
 		})
