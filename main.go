@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
+	"net/http"
 	"os"
 	"strconv"
+	"time"
 )
 
 type Product struct {
@@ -99,6 +101,73 @@ func GetAllWithPriceGreaterThan(c *gin.Context) {
 		"products": filteredProducts,
 	})
 }
+func getNewId() int {
+	maxId := 0
+	for _, product := range products {
+		if product.ID > maxId {
+			maxId = product.ID
+		}
+	}
+	return maxId + 1
+}
+func existsAnyWithCodeValue(codeValue string) bool {
+	for _, product := range products {
+		if product.CodeValue == codeValue {
+			return true
+		}
+	}
+	return false
+}
+func isValidDate(date string) bool {
+	_, err := time.Parse("02/01/2006", date)
+	return err == nil
+}
+func SaveProduct(ctx *gin.Context) {
+	var product Product
+	err := ctx.ShouldBindJSON(&product)
+	if err != nil {
+		ctx.JSON(400, gin.H{
+			"message": "invalid product",
+		})
+		return
+	}
+	product.ID = getNewId()
+	if product.Quantity < 0 {
+		ctx.JSON(400, gin.H{
+			"message": "invalid quantity",
+		})
+		return
+	}
+	if product.Price < 0 {
+		ctx.JSON(400, gin.H{
+			"message": "invalid price",
+		})
+		return
+	}
+	if product.Expiration == "" || isValidDate(product.Expiration) {
+		ctx.JSON(400, gin.H{
+			"message": "invalid expiration",
+		})
+		return
+	}
+	if product.Name == "" {
+		ctx.JSON(400, gin.H{
+			"message": "invalid name",
+		})
+		return
+	}
+	if product.CodeValue == "" || existsAnyWithCodeValue(product.CodeValue) {
+		ctx.JSON(400, gin.H{
+			"message": "invalid code value",
+		})
+		return
+	}
+	products = append(products, product)
+	ctx.JSON(http.StatusCreated, gin.H{
+		"product": product,
+	})
+
+}
 
 func main() {
 	engine := gin.Default()
@@ -110,6 +179,7 @@ func main() {
 	engine.GET("/products", GetProducts)
 	engine.GET("/products/:id", GetProductById)
 	engine.GET("/products/search", GetAllWithPriceGreaterThan)
+	engine.POST("/products", SaveProduct)
 	err = engine.Run()
 	if err != nil {
 		fmt.Println(err)
