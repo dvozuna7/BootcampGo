@@ -1,4 +1,4 @@
-module github.com/practica/1/web
+module practiva/web
 
 go 1.21.4
 
