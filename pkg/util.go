@@ -8,7 +8,7 @@ import (
 	"practiva/web/internal/domain"
 )
 
-func FullfilDB(path string) []domain.Product {
+func FullfilDB(path string) *[]domain.Product {
 	data, err := os.Open(path)
 	fullPath, err := os.Getwd()
 	if err != nil {
@@ -23,6 +23,5 @@ func FullfilDB(path string) []domain.Product {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	return slice
+	return &slice
 }
