@@ -44,7 +44,7 @@ func (h *ProductHandler) GetProductById(ctx *gin.Context) {
 	if err != nil {
 		switch err {
 		case product.ProductNotFound:
-			ctx.JSON(http.StatusNotFound, err)
+			ctx.AbortWithStatus(http.StatusNotFound)
 		default:
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"message": "unexpected error",
@@ -84,7 +84,7 @@ func (h *ProductHandler) DeleteProductById(ctx *gin.Context) {
 	if err != nil {
 		switch err {
 		case product.ProductNotFound:
-			ctx.JSON(http.StatusNotFound, err)
+			ctx.AbortWithStatus(http.StatusNotFound)
 		default:
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"message": "unexpected error",
