@@ -33,3 +33,6 @@ func (s *DefaultService) FindByPriceGreaterThan(ctx *gin.Context, price float64)
 func (s *DefaultService) Update(ctx *gin.Context, product *domain.Product) (*domain.Product, error) {
 	return s.Repository.Update(product)
 }
+func (s *DefaultService) DeleteById(ctx *gin.Context, id int) error {
+	return s.Repository.DeleteById(id)
+}

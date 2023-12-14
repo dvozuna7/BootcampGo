@@ -9,4 +9,5 @@ type Repository interface {
 	FindById(id int) (*domain.Product, error)
 	FindByPriceGreaterThan(price float64) (*[]domain.Product, error)
 	Update(product *domain.Product) (*domain.Product, error)
+	DeleteById(id int) error
 }

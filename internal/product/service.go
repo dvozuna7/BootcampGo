@@ -10,4 +10,5 @@ type Service interface {
 	FindById(ctx *gin.Context, id int) (*domain.Product, error)
 	FindByPriceGreaterThan(ctx *gin.Context, price float64) (*[]domain.Product, error)
 	Update(ctx *gin.Context, product *domain.Product) (*domain.Product, error)
+	DeleteById(ctx *gin.Context, id int) error
 }

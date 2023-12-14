@@ -19,6 +19,7 @@ func main() {
 		group.GET("/:id", productHandler.GetProductById)
 		group.GET("/search", productHandler.GetAllWithPriceGreaterThan)
 		group.GET("/ping", productHandler.Ping)
+		group.DELETE("/:id", productHandler.DeleteProductById)
 	}
 	err := router.Run(":8080")
 	if err != nil {

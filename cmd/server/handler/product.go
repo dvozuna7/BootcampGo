@@ -80,7 +80,21 @@ func (h *ProductHandler) DeleteProductById(ctx *gin.Context) {
 		return
 	}
 	fmt.Println("TODO: ADD DELETION: ", id)
-	//TODO: Add deletion to service
+	err = h.service.DeleteById(ctx, int(id))
+	if err != nil {
+		switch err {
+		case product.ProductNotFound:
+			ctx.JSON(http.StatusNotFound, err)
+		default:
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": "unexpected error",
+			})
+		}
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "product deleted",
+	})
 }
 func isValidDate(date string) bool {
 	_, err := time.Parse("02/01/2006", date)
